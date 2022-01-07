@@ -38,8 +38,6 @@ def to_utf8(s):
     if six.PY2:
         if isinstance(s, str):
             return s
-        elif isinstance(s, unicode):
-            return s.encode('utf-8')
         elif isinstance(s, (list, tuple, set)):
             return [to_utf8(v) for v in s]
         else:
