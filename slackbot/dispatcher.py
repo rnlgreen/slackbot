@@ -48,6 +48,13 @@ class MessageDispatcher(object):
 
     def _dispatch_msg_handler(self, category, msg):
         responded = False
+        #RG: Additional code to handle IFTTT messages that have text set to '' and use the 'attachments' field instead
+        if msg.get('text',None) in ['',None]:
+            try:
+                msg['text'] = msg.get('attachments')[0].get('fallback','')
+            except:
+                pass
+        #RG: End of additional code
         for func, args in self._plugins.get_plugins(category, msg.get('text', None)):
             if func:
                 responded = True
@@ -269,7 +276,7 @@ class Message(object):
     def direct_reply(self, text):
         """
             Send a reply via direct message using RTM API
-
+            
         """
         channel_id = self._client.open_dm_channel(self._get_user_id())
         self._client.rtm_send_message(channel_id, text)
